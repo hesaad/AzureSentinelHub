@@ -1,0 +1,6 @@
+TEAMSGraphCallRecords_CL
+| extend CallStartDate = format_datetime(startDateTime_t,'dd-MM-yyyy')
+| extend CallStartTime = format_datetime(startDateTime_t, 'HH:mm:ss')
+| extend CallEndDate = format_datetime(endDateTime_t,'dd-MM-yyyy')
+| extend CallEndTime = format_datetime(endDateTime_t, 'HH:mm:ss')
+| project modalities_s, CallStartDate, CallStartTime, CallEndDate, CallEndTime, endDateTime_t, type_s, organizer_user_displayName_s, participants_s
