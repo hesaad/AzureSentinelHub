@@ -1,0 +1,172 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP_-Get_TEAMS_Call_Records_by_SessionID": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "6e99aba1-a2d9-4b13-8dbc-e13d215d4b52",
+                        "secret": "41-2~nuy1Llqv5fl5~ZJYF4~kW_GLPT1wb",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "method": "GET",
+                    "uri": "https://graph.microsoft.com/beta/communications/callRecords/@{variables('TEAMSCallRecordsID')}?$expand=sessions($expand=segments)"
+                },
+                "runAfter": {
+                    "HTTP_-_Get_All_TEAMS_CallRecords_Sessions": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Create_CallRecords_Subscription": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "6e99aba1-a2d9-4b13-8dbc-e13d215d4b52",
+                        "secret": "41-2~nuy1Llqv5fl5~ZJYF4~kW_GLPT1wb",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "body": {
+                        "changeType": "updated",
+                        "clientState": "secretClientValue",
+                        "expirationDateTime": "2022-11-20T18:23:45.9356913Z",
+                        "latestSupportedTlsVersion": "v1_2",
+                        "notificationUrl": "https://outlook.office.com/webhook/3ec886e9-86ef-4c86-bfff-2d0321f3313e@2006d214-5f91-4166-8d92-95f5e3ad9ec6/IncomingWebhook/9c6e121ed50145199939f71721fcbcc7/03c99422-50b0-40ea-a00e-2b0b1b1892d5",
+                        "resource": "/communications/callRecords"
+                    },
+                    "method": "POST",
+                    "uri": "https://graph.microsoft.com/beta/subscriptions"
+                },
+                "runAfter": {
+                    "HTTP_-_Get_HTTP_with_AzureAD_OAuth": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Get_All_TEAMS_CallRecords_Sessions": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "6e99aba1-a2d9-4b13-8dbc-e13d215d4b52",
+                        "secret": "41-2~nuy1Llqv5fl5~ZJYF4~kW_GLPT1wb",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "method": "GET",
+                    "uri": "https://graph.microsoft.com/beta/communications/callRecords/@{variables('TEAMSCallRecordsID')}/sessions"
+                },
+                "runAfter": {
+                    "HTTP_-_List_Subscriptions": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Get_HTTP_with_AzureAD_OAuth": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "6e99aba1-a2d9-4b13-8dbc-e13d215d4b52",
+                        "secret": "41-2~nuy1Llqv5fl5~ZJYF4~kW_GLPT1wb",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "method": "GET",
+                    "uri": "https://graph.microsoft.com/v1.0/groups?$filter=groupTypes/any(c:c+eq+'Unified')"
+                },
+                "runAfter": {
+                    "Initialize_variable_-_CallRecordID": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_List_Subscriptions": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "6e99aba1-a2d9-4b13-8dbc-e13d215d4b52",
+                        "secret": "41-2~nuy1Llqv5fl5~ZJYF4~kW_GLPT1wb",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "method": "GET",
+                    "uri": "https://graph.microsoft.com/v1.0/subscriptions"
+                },
+                "runAfter": {
+                    "HTTP_-_Create_CallRecords_Subscription": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Initialize_variable_-_CallRecordID": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "TEAMSCallRecordsID",
+                            "type": "string",
+                            "value": "fc340109-7190-4dbb-bf99-4d948bccae42"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Send_TEAMS_CallRecords_Data_to_Azure_Sentinel_LA-Workspace": {
+                "inputs": {
+                    "body": "@{body('HTTP_-Get_TEAMS_Call_Records_by_SessionID')}",
+                    "headers": {
+                        "Log-Type": "TEAMSGraphCallRecords"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/api/logs"
+                },
+                "runAfter": {
+                    "HTTP_-Get_TEAMS_Call_Records_by_SessionID": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Minute",
+                    "interval": 10
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureloganalyticsdatacollector": {
+                    "connectionId": "/subscriptions/6a021fde-5198-441e-9190-9d634e1f4a84/resourceGroups/hesaad-csgRG/providers/Microsoft.Web/connections/azureloganalyticsdatacollector",
+                    "connectionName": "azureloganalyticsdatacollector",
+                    "id": "/subscriptions/6a021fde-5198-441e-9190-9d634e1f4a84/providers/Microsoft.Web/locations/eastus/managedApis/azureloganalyticsdatacollector"
+                }
+            }
+        }
+    }
+}
