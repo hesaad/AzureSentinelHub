@@ -1,0 +1,3 @@
+Compliance_IRM_AuditGeneral_CL
+| where RecordType_d == "40" and Category == "InsiderRiskManagement"
+| project TimeGenerated, AlertType_s, Category, Comments_s, parse_json(Data_s).userPrincipalName, Name_s, Severity_s, Source_s, Status_s, CreationTime_t, Operation_s, RecordType_d, ResultStatus_s
