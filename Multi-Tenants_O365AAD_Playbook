@@ -1,0 +1,214 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Audit.AzureActiveDirectory-Var": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "AAD",
+                            "type": "string",
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=Audit.AzureActiveDirectory&PublisherIdentifier=Microsoft"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Audit.General-Var": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Audit.General-Var": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "AuditGeneral",
+                            "type": "string",
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=Audit.General&PublisherIdentifier=Microsoft"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parent-Tenant_ID": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "DLP-Var": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "DLP",
+                            "type": "string",
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=DLP.ALL&PublisherIdentifier=Microsoft"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Audit.AzureActiveDirectory-Var": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "For_each": {
+                "actions": {
+                    "HTTP": {
+                        "inputs": {
+                            "authentication": {
+                                "audience": "https://manage.office.com",
+                                "clientId": "bf94f066-f5c2-4a40-90b0-bc69c59b7304",
+                                "secret": "W_jInZi~pz6f~_r5V75j6mohD2XO.dx2O-",
+                                "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                                "type": "ActiveDirectoryOAuth"
+                            },
+                            "headers": {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json"
+                            },
+                            "method": "GET",
+                            "uri": "@items('For_each')['contentUri']"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    },
+                    "Send_Data": {
+                        "inputs": {
+                            "body": "@{json(body('HTTP'))}",
+                            "headers": {
+                                "Log-Type": "ChildO365AAD"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector_1']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {
+                            "HTTP": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('Parse_JSON')",
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "HTTP__-_Get_Logs": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://manage.office.com",
+                        "clientId": "bf94f066-f5c2-4a40-90b0-bc69c59b7304",
+                        "secret": "W_jInZi~pz6f~_r5V75j6mohD2XO.dx2O-",
+                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "headers": {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "@variables('AAD')"
+                },
+                "runAfter": {
+                    "DLP-Var": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Parent-Tenant_ID": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ParentTenantID",
+                            "type": "string",
+                            "value": "2006d214-5f91-4166-8d92-95f5e3ad9ec6"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@body('HTTP__-_Get_Logs')",
+                    "schema": {
+                        "items": {
+                            "properties": {
+                                "contentCreated": {
+                                    "type": "string"
+                                },
+                                "contentExpiration": {
+                                    "type": "string"
+                                },
+                                "contentId": {
+                                    "type": "string"
+                                },
+                                "contentType": {
+                                    "type": "string"
+                                },
+                                "contentUri": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "contentType",
+                                "contentId",
+                                "contentUri",
+                                "contentCreated",
+                                "contentExpiration"
+                            ],
+                            "type": "object"
+                        },
+                        "type": "array"
+                    }
+                },
+                "runAfter": {
+                    "HTTP__-_Get_Logs": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Week",
+                    "interval": 1
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureloganalyticsdatacollector_1": {
+                    "connectionId": "/subscriptions/8xxxxx5-a7xx-4xxc-9xxc-89xxxxxxx45/resourceGroups/AzurePassRG/providers/Microsoft.Web/connections/",
+                    "connectionName": "azureloganalyticsdatacollector-Get-O365Data",
+                    "id": "/subscriptions/8xxxxx5-a7xx-4xxc-9xxc-89xxxxxxx45/providers/Microsoft.Web/locations/westeurope/managedApis/azureloganalyticsdatacollector"
+                }
+            }
+        }
+    }
+}
