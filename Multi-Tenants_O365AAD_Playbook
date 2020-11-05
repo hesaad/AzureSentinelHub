@@ -8,7 +8,7 @@
                         {
                             "name": "AAD",
                             "type": "string",
-                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=Audit.AzureActiveDirectory&PublisherIdentifier=Microsoft"
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ChildTenantID')}/activity/feed/subscriptions/content?contentType=Audit.AzureActiveDirectory&PublisherIdentifier=Microsoft"
                         }
                     ]
                 },
@@ -25,15 +25,28 @@
                         {
                             "name": "AuditGeneral",
                             "type": "string",
-                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=Audit.General&PublisherIdentifier=Microsoft"
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ChildTenantID')}/activity/feed/subscriptions/content?contentType=Audit.General&PublisherIdentifier=Microsoft"
                         }
                     ]
                 },
                 "runAfter": {
-                    "Parent-Tenant_ID": [
+                    "Child-Tenant_ID": [
                         "Succeeded"
                     ]
                 },
+                "type": "InitializeVariable"
+            },
+            "Child-Tenant_ID": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ChildTenantID",
+                            "type": "string",
+                            "value": "2006d214-5f91-4166-8d92-95f5e3ad9ec6"
+                        }
+                    ]
+                },
+                "runAfter": {},
                 "type": "InitializeVariable"
             },
             "DLP-Var": {
@@ -42,7 +55,7 @@
                         {
                             "name": "DLP",
                             "type": "string",
-                            "value": "https://manage.office.com/api/v1.0/@{variables('ParentTenantID')}/activity/feed/subscriptions/content?contentType=DLP.ALL&PublisherIdentifier=Microsoft"
+                            "value": "https://manage.office.com/api/v1.0/@{variables('ChildTenantID')}/activity/feed/subscriptions/content?contentType=DLP.ALL&PublisherIdentifier=Microsoft"
                         }
                     ]
                 },
@@ -53,15 +66,15 @@
                 },
                 "type": "InitializeVariable"
             },
-            "For_each": {
+            "For_each_-O365API": {
                 "actions": {
                     "HTTP": {
                         "inputs": {
                             "authentication": {
                                 "audience": "https://manage.office.com",
-                                "clientId": "bf94f066-f5c2-4a40-90b0-bc69c59b7304",
-                                "secret": "W_jInZi~pz6f~_r5V75j6mohD2XO.dx2O-",
-                                "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                                "clientId": "bfXXf066-f5c2-4a40-90b0-bc6XXb7304",
+                                "secret": "<SecretKey>",
+                                "tenant": "2XXX4-5f91-4166-XX92-95fXXXc6",
                                 "type": "ActiveDirectoryOAuth"
                             },
                             "headers": {
@@ -69,7 +82,7 @@
                                 "Content-Type": "application/json"
                             },
                             "method": "GET",
-                            "uri": "@items('For_each')['contentUri']"
+                            "uri": "@items('For_each_-O365API')['contentUri']"
                         },
                         "runAfter": {},
                         "type": "Http"
@@ -96,21 +109,40 @@
                         "type": "ApiConnection"
                     }
                 },
-                "foreach": "@body('Parse_JSON')",
+                "foreach": "@body('Parse_JSON_-_O365API')",
                 "runAfter": {
-                    "Parse_JSON": [
+                    "Parse_JSON_-GraphAPI": [
                         "Succeeded"
                     ]
                 },
                 "type": "Foreach"
             },
-            "HTTP__-_Get_Logs": {
+            "HTTP_-_GraphAPI": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://graph.microsoft.com",
+                        "clientId": "bXXX66-XXc2-XX40-90b0-bcXXX7304",
+                        "secret": "<SecretKey>",
+                        "tenant": "200XX4-XX91-4XX-XX92-95XXd9ec6",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "method": "GET",
+                    "uri": "@variables('Sign-Ins')"
+                },
+                "runAfter": {
+                    "HTTP__-_Get_Logs-O365API": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP__-_Get_Logs-O365API": {
                 "inputs": {
                     "authentication": {
                         "audience": "https://manage.office.com",
-                        "clientId": "bf94f066-f5c2-4a40-90b0-bc69c59b7304",
-                        "secret": "W_jInZi~pz6f~_r5V75j6mohD2XO.dx2O-",
-                        "tenant": "2006d214-5f91-4166-8d92-95f5e3ad9ec6",
+                        "clientId": "bfXXX66-f5c2-XX0-9XX0-bXXX4",
+                        "secret": "<SecretKey>",
+                        "tenant": "20XXX14-5f91-XX66-8XX-95XXXc6",
                         "type": "ActiveDirectoryOAuth"
                     },
                     "headers": {
@@ -121,28 +153,228 @@
                     "uri": "@variables('AAD')"
                 },
                 "runAfter": {
-                    "DLP-Var": [
+                    "User_Activities-Var": [
                         "Succeeded"
                     ]
                 },
                 "type": "Http"
             },
-            "Parent-Tenant_ID": {
+            "Parse_JSON_-GraphAPI": {
                 "inputs": {
-                    "variables": [
-                        {
-                            "name": "ParentTenantID",
-                            "type": "string",
-                            "value": "2006d214-5f91-4166-8d92-95f5e3ad9ec6"
-                        }
+                    "content": "@body('HTTP_-_GraphAPI')",
+                    "schema": {
+                        "properties": {
+                            "body": {
+                                "properties": {
+                                    "@@odata.context": {
+                                        "type": "string"
+                                    },
+                                    "value": {
+                                        "items": {
+                                            "properties": {
+                                                "appDisplayName": {
+                                                    "type": "string"
+                                                },
+                                                "appId": {
+                                                    "type": "string"
+                                                },
+                                                "appliedConditionalAccessPolicies": {
+                                                    "type": "array"
+                                                },
+                                                "clientAppUsed": {},
+                                                "conditionalAccessStatus": {
+                                                    "type": "string"
+                                                },
+                                                "correlationId": {
+                                                    "type": "string"
+                                                },
+                                                "createdDateTime": {
+                                                    "type": "string"
+                                                },
+                                                "deviceDetail": {
+                                                    "properties": {
+                                                        "browser": {
+                                                            "type": "string"
+                                                        },
+                                                        "deviceId": {
+                                                            "type": "string"
+                                                        },
+                                                        "displayName": {},
+                                                        "isCompliant": {},
+                                                        "isManaged": {},
+                                                        "operatingSystem": {
+                                                            "type": "string"
+                                                        },
+                                                        "trustType": {}
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "ipAddress": {
+                                                    "type": "string"
+                                                },
+                                                "isInteractive": {
+                                                    "type": "boolean"
+                                                },
+                                                "location": {
+                                                    "properties": {
+                                                        "city": {
+                                                            "type": "string"
+                                                        },
+                                                        "countryOrRegion": {
+                                                            "type": "string"
+                                                        },
+                                                        "geoCoordinates": {
+                                                            "properties": {
+                                                                "altitude": {},
+                                                                "latitude": {
+                                                                    "type": "number"
+                                                                },
+                                                                "longitude": {
+                                                                    "type": "number"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "state": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "resourceDisplayName": {
+                                                    "type": "string"
+                                                },
+                                                "resourceId": {
+                                                    "type": "string"
+                                                },
+                                                "riskDetail": {
+                                                    "type": "string"
+                                                },
+                                                "riskEventTypes": {
+                                                    "type": "array"
+                                                },
+                                                "riskEventTypes_v2": {
+                                                    "type": "array"
+                                                },
+                                                "riskLevelAggregated": {
+                                                    "type": "string"
+                                                },
+                                                "riskLevelDuringSignIn": {
+                                                    "type": "string"
+                                                },
+                                                "riskState": {
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "properties": {
+                                                        "additionalDetails": {},
+                                                        "errorCode": {
+                                                            "type": "integer"
+                                                        },
+                                                        "failureReason": {
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                },
+                                                "userDisplayName": {
+                                                    "type": "string"
+                                                },
+                                                "userId": {
+                                                    "type": "string"
+                                                },
+                                                "userPrincipalName": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "createdDateTime",
+                                                "userDisplayName",
+                                                "userPrincipalName",
+                                                "userId",
+                                                "appId",
+                                                "appDisplayName",
+                                                "ipAddress",
+                                                "clientAppUsed",
+                                                "correlationId",
+                                                "conditionalAccessStatus",
+                                                "isInteractive",
+                                                "riskDetail",
+                                                "riskLevelAggregated",
+                                                "riskLevelDuringSignIn",
+                                                "riskState",
+                                                "riskEventTypes",
+                                                "riskEventTypes_v2",
+                                                "resourceDisplayName",
+                                                "resourceId",
+                                                "status",
+                                                "deviceDetail",
+                                                "location",
+                                                "appliedConditionalAccessPolicies"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "headers": {
+                                "properties": {
+                                    "Cache-Control": {
+                                        "type": "string"
+                                    },
+                                    "Content-Length": {
+                                        "type": "string"
+                                    },
+                                    "Content-Type": {
+                                        "type": "string"
+                                    },
+                                    "Date": {
+                                        "type": "string"
+                                    },
+                                    "OData-Version": {
+                                        "type": "string"
+                                    },
+                                    "Strict-Transport-Security": {
+                                        "type": "string"
+                                    },
+                                    "Vary": {
+                                        "type": "string"
+                                    },
+                                    "client-request-id": {
+                                        "type": "string"
+                                    },
+                                    "request-id": {
+                                        "type": "string"
+                                    },
+                                    "x-ms-ags-diagnostic": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "statusCode": {
+                                "type": "integer"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "Parse_JSON_-_O365API": [
+                        "Succeeded"
                     ]
                 },
-                "runAfter": {},
-                "type": "InitializeVariable"
+                "type": "ParseJson"
             },
-            "Parse_JSON": {
+            "Parse_JSON_-_O365API": {
                 "inputs": {
-                    "content": "@body('HTTP__-_Get_Logs')",
+                    "content": "@body('HTTP__-_Get_Logs-O365API')",
                     "schema": {
                         "items": {
                             "properties": {
@@ -175,11 +407,66 @@
                     }
                 },
                 "runAfter": {
-                    "HTTP__-_Get_Logs": [
+                    "HTTP_-_GraphAPI": [
                         "Succeeded"
                     ]
                 },
                 "type": "ParseJson"
+            },
+            "Send_Data_-GraphAPI": {
+                "inputs": {
+                    "body": "@{body('HTTP_-_GraphAPI')}",
+                    "headers": {
+                        "Log-Type": "ChildAADSignIn"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureloganalyticsdatacollector_1']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/api/logs"
+                },
+                "runAfter": {
+                    "For_each_-O365API": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "User_Activities-Var": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "UserActivities",
+                            "type": "string",
+                            "value": "https://graph.microsoft.com/v1.0/auditLogs/directoryAudits"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "User_SignIns-_Var": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "User_SignIns-_Var": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Sign-Ins",
+                            "type": "string",
+                            "value": "https://graph.microsoft.com/v1.0/auditLogs/signIns"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "DLP-Var": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
             }
         },
         "contentVersion": "1.0.0.0",
@@ -193,8 +480,8 @@
         "triggers": {
             "Recurrence": {
                 "recurrence": {
-                    "frequency": "Week",
-                    "interval": 1
+                    "frequency": "Minute",
+                    "interval": 5
                 },
                 "type": "Recurrence"
             }
@@ -204,9 +491,9 @@
         "$connections": {
             "value": {
                 "azureloganalyticsdatacollector_1": {
-                    "connectionId": "/subscriptions/8xxxxx5-a7xx-4xxc-9xxc-89xxxxxxx45/resourceGroups/AzurePassRG/providers/Microsoft.Web/connections/",
+                    "connectionId": "/subscriptions/8XXX5-a75b-XXc-9XXX9c-89XXXf45/resourceGroups/AzurePassRG/providers/Microsoft.Web/connections/",
                     "connectionName": "azureloganalyticsdatacollector-Get-O365Data",
-                    "id": "/subscriptions/8xxxxx5-a7xx-4xxc-9xxc-89xxxxxxx45/providers/Microsoft.Web/locations/westeurope/managedApis/azureloganalyticsdatacollector"
+                    "id": "/subscriptions/8XXX5-a75b-XXc-9XXX9c-89XXXf45/providers/Microsoft.Web/locations/westeurope/managedApis/azureloganalyticsdatacollector"
                 }
             }
         }
