@@ -1,0 +1,202 @@
+{
+    "properties": {
+        "body": {
+            "properties": {
+                "@@odata.context": {
+                    "type": "string"
+                },
+                "value": {
+                    "items": {
+                        "properties": {
+                            "appDisplayName": {
+                                "type": "string"
+                            },
+                            "appId": {
+                                "type": "string"
+                            },
+                            "appliedConditionalAccessPolicies": {
+                                "type": "array"
+                            },
+                            "clientAppUsed": {},
+                            "conditionalAccessStatus": {
+                                "type": "string"
+                            },
+                            "correlationId": {
+                                "type": "string"
+                            },
+                            "createdDateTime": {
+                                "type": "string"
+                            },
+                            "deviceDetail": {
+                                "properties": {
+                                    "browser": {
+                                        "type": "string"
+                                    },
+                                    "deviceId": {
+                                        "type": "string"
+                                    },
+                                    "displayName": {},
+                                    "isCompliant": {},
+                                    "isManaged": {},
+                                    "operatingSystem": {
+                                        "type": "string"
+                                    },
+                                    "trustType": {}
+                                },
+                                "type": "object"
+                            },
+                            "id": {
+                                "type": "string"
+                            },
+                            "ipAddress": {
+                                "type": "string"
+                            },
+                            "isInteractive": {
+                                "type": "boolean"
+                            },
+                            "location": {
+                                "properties": {
+                                    "city": {
+                                        "type": "string"
+                                    },
+                                    "countryOrRegion": {
+                                        "type": "string"
+                                    },
+                                    "geoCoordinates": {
+                                        "properties": {
+                                            "altitude": {},
+                                            "latitude": {
+                                                "type": "number"
+                                            },
+                                            "longitude": {
+                                                "type": "number"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "state": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "resourceDisplayName": {
+                                "type": "string"
+                            },
+                            "resourceId": {
+                                "type": "string"
+                            },
+                            "riskDetail": {
+                                "type": "string"
+                            },
+                            "riskEventTypes": {
+                                "type": "array"
+                            },
+                            "riskEventTypes_v2": {
+                                "type": "array"
+                            },
+                            "riskLevelAggregated": {
+                                "type": "string"
+                            },
+                            "riskLevelDuringSignIn": {
+                                "type": "string"
+                            },
+                            "riskState": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "properties": {
+                                    "additionalDetails": {},
+                                    "errorCode": {
+                                        "type": "integer"
+                                    },
+                                    "failureReason": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "userDisplayName": {
+                                "type": "string"
+                            },
+                            "userId": {
+                                "type": "string"
+                            },
+                            "userPrincipalName": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "id",
+                            "createdDateTime",
+                            "userDisplayName",
+                            "userPrincipalName",
+                            "userId",
+                            "appId",
+                            "appDisplayName",
+                            "ipAddress",
+                            "clientAppUsed",
+                            "correlationId",
+                            "conditionalAccessStatus",
+                            "isInteractive",
+                            "riskDetail",
+                            "riskLevelAggregated",
+                            "riskLevelDuringSignIn",
+                            "riskState",
+                            "riskEventTypes",
+                            "riskEventTypes_v2",
+                            "resourceDisplayName",
+                            "resourceId",
+                            "status",
+                            "deviceDetail",
+                            "location",
+                            "appliedConditionalAccessPolicies"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "headers": {
+            "properties": {
+                "Cache-Control": {
+                    "type": "string"
+                },
+                "Content-Length": {
+                    "type": "string"
+                },
+                "Content-Type": {
+                    "type": "string"
+                },
+                "Date": {
+                    "type": "string"
+                },
+                "OData-Version": {
+                    "type": "string"
+                },
+                "Strict-Transport-Security": {
+                    "type": "string"
+                },
+                "Vary": {
+                    "type": "string"
+                },
+                "client-request-id": {
+                    "type": "string"
+                },
+                "request-id": {
+                    "type": "string"
+                },
+                "x-ms-ags-diagnostic": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "statusCode": {
+            "type": "integer"
+        }
+    },
+    "type": "object"
+}
