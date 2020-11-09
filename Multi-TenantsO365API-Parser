@@ -1,0 +1,30 @@
+{
+    "items": {
+        "properties": {
+            "contentCreated": {
+                "type": "string"
+            },
+            "contentExpiration": {
+                "type": "string"
+            },
+            "contentId": {
+                "type": "string"
+            },
+            "contentType": {
+                "type": "string"
+            },
+            "contentUri": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "contentType",
+            "contentId",
+            "contentUri",
+            "contentCreated",
+            "contentExpiration"
+        ],
+        "type": "object"
+    },
+    "type": "array"
+}
