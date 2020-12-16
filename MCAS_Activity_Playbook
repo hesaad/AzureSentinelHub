@@ -2,6 +2,46 @@
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
+            "Append_to_array_variable": {
+                "inputs": {
+                    "name": "TempArrayVar",
+                    "value": "@body('Parse_JSON_-_MCAS_Activities')"
+                },
+                "runAfter": {
+                    "Initialize_An_Array_Variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "AppendToArrayVariable"
+            },
+            "For_each": {
+                "actions": {
+                    "Send_Data_-_MCAS_Activities_Log": {
+                        "inputs": {
+                            "body": "@{items('For_each')}",
+                            "headers": {
+                                "Log-Type": "MCAS_Activity_Log"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@variables('TempArrayVar')",
+                "runAfter": {
+                    "Append_to_array_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
             "HTTP_-_MCAS_Activities_API": {
                 "inputs": {
                     "headers": {
@@ -17,13 +57,29 @@
                 },
                 "type": "Http"
             },
+            "Initialize_An_Array_Variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "TempArrayVar",
+                            "type": "array"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Parse_JSON_-_MCAS_Activities": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
             "MCAS_API_Token_-_Variable": {
                 "inputs": {
                     "variables": [
                         {
                             "name": "MCAS_API_Token",
                             "type": "string",
-                            "value": "Token QhwZGXXXXXXXXXaS05fXXXXXXXXGx8dSR4aHExNF0lLHB9XXXXXXXXXkxLFXXXXXXXXXXXXXXX"
+                            "value": "Token QhwZGlcWHBXXXXXXXXXXXXFk4aFXXXsXXXXXXXXXX1OGk4fGk5XXkXX"
                         }
                     ]
                 },
@@ -573,27 +629,6 @@
                     ]
                 },
                 "type": "ParseJson"
-            },
-            "Send_Data_-_MCAS_Activities": {
-                "inputs": {
-                    "body": "@{body('HTTP_-_MCAS_Activities_API')}",
-                    "headers": {
-                        "Log-Type": "MCAS_Activity"
-                    },
-                    "host": {
-                        "connection": {
-                            "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
-                        }
-                    },
-                    "method": "post",
-                    "path": "/api/logs"
-                },
-                "runAfter": {
-                    "Parse_JSON_-_MCAS_Activities": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "ApiConnection"
             }
         },
         "contentVersion": "1.0.0.0",
@@ -618,9 +653,9 @@
         "$connections": {
             "value": {
                 "azureloganalyticsdatacollector": {
-                    "connectionId": "/subscriptions/6a0XXXXe-5XX8-441e-XXCC-XXXXe1f4a84/resourceGroups/hesaad-csgRG/providers/Microsoft.Web/connections/azureloganalyticsdatacollector-Get-O365Data",
+                    "connectionId": "/subscriptions/6aXXXXXXde-XXXX90-9d634XXXXXXXX4/resourceGroups/hesaad-csgRG/providers/Microsoft.Web/connections/azureloganalyticsdatacollector-Get-O365Data",
                     "connectionName": "azureloganalyticsdatacollector-Get-O365Data",
-                    "id": "/subscriptions/6a0XXXXe-5XX8-441e-XXCC-XXXXe1f4a84/providers/Microsoft.Web/locations/eastus/managedApis/azureloganalyticsdatacollector"
+                    "id": "/subscriptions/6aXXXXXXde-XXXX90-9d634XXXXXXXX4/providers/Microsoft.Web/locations/eastus/managedApis/azureloganalyticsdatacollector"
                 }
             }
         }
