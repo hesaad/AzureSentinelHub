@@ -1,0 +1,413 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each": {
+                "actions": {
+                    "Send_Data": {
+                        "inputs": {
+                            "body": "@{items('For_each')}",
+                            "headers": {
+                                "Log-Type": "MessageTrace_email"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('Parse_JSON')?['Results']",
+                "runAfter": {
+                    "Parse_JSON": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "HTTP": {
+                "inputs": {
+                    "authentication": {
+                        "audience": "https://api.security.microsoft.com",
+                        "clientId": "3XXX0-eXX-4XXb-XX2-bXXXXe1",
+                        "secret": "nXXXXXX_lXXXXXLX",
+                        "tenant": "2XXX4-XXX-4XX-8XX-9X",
+                        "type": "ActiveDirectoryOAuth"
+                    },
+                    "body": {
+                        "Query": "EmailEvents | where Timestamp > ago(30d) | take 100"
+                    },
+                    "headers": {
+                        "Content-Type": "application/json"
+                    },
+                    "method": "POST",
+                    "uri": "https://api.security.microsoft.com/api/advancedHunting/run"
+                },
+                "runAfter": {},
+                "type": "Http"
+            },
+            "Parse_JSON": {
+                "inputs": {
+                    "content": "@body('HTTP')",
+                    "schema": {
+                        "properties": {
+                            "body": {
+                                "properties": {
+                                    "Results": {
+                                        "items": {
+                                            "properties": {
+                                                "AccountDomain": {
+                                                    "type": "string"
+                                                },
+                                                "AccountName": {
+                                                    "type": "string"
+                                                },
+                                                "AccountObjectId": {
+                                                    "type": "string"
+                                                },
+                                                "AccountSid": {
+                                                    "type": "string"
+                                                },
+                                                "AccountUpn": {
+                                                    "type": "string"
+                                                },
+                                                "ActionType": {
+                                                    "type": "string"
+                                                },
+                                                "AdditionalFields": {
+                                                    "type": "string"
+                                                },
+                                                "AppGuardContainerId": {
+                                                    "type": "string"
+                                                },
+                                                "DeviceId": {
+                                                    "type": "string"
+                                                },
+                                                "DeviceName": {
+                                                    "type": "string"
+                                                },
+                                                "FileName": {
+                                                    "type": "string"
+                                                },
+                                                "FolderPath": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessAccountDomain": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessAccountName": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessAccountObjectId": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessAccountSid": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessAccountUpn": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessCommandLine": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessCreationTime": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessFileName": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessFolderPath": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessId": {
+                                                    "type": "integer"
+                                                },
+                                                "InitiatingProcessIntegrityLevel": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessLogonId": {
+                                                    "type": "integer"
+                                                },
+                                                "InitiatingProcessMD5": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessParentCreationTime": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessParentFileName": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessParentId": {
+                                                    "type": "integer"
+                                                },
+                                                "InitiatingProcessSHA1": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessSHA256": {
+                                                    "type": "string"
+                                                },
+                                                "InitiatingProcessTokenElevation": {
+                                                    "type": "string"
+                                                },
+                                                "LogonId": {
+                                                    "type": "integer"
+                                                },
+                                                "MD5": {
+                                                    "type": "string"
+                                                },
+                                                "ProcessCommandLine": {
+                                                    "type": "string"
+                                                },
+                                                "ProcessCreationTime": {
+                                                    "type": "string"
+                                                },
+                                                "ProcessId": {
+                                                    "type": "integer"
+                                                },
+                                                "ProcessIntegrityLevel": {
+                                                    "type": "string"
+                                                },
+                                                "ProcessTokenElevation": {
+                                                    "type": "string"
+                                                },
+                                                "ReportId": {
+                                                    "type": "integer"
+                                                },
+                                                "SHA1": {
+                                                    "type": "string"
+                                                },
+                                                "SHA256": {
+                                                    "type": "string"
+                                                },
+                                                "Timestamp": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "Timestamp",
+                                                "DeviceId",
+                                                "DeviceName",
+                                                "ActionType",
+                                                "FileName",
+                                                "FolderPath",
+                                                "SHA1",
+                                                "SHA256",
+                                                "MD5",
+                                                "ProcessId",
+                                                "ProcessCommandLine",
+                                                "ProcessIntegrityLevel",
+                                                "ProcessTokenElevation",
+                                                "ProcessCreationTime",
+                                                "AccountDomain",
+                                                "AccountName",
+                                                "AccountSid",
+                                                "AccountUpn",
+                                                "AccountObjectId",
+                                                "LogonId",
+                                                "InitiatingProcessAccountDomain",
+                                                "InitiatingProcessAccountName",
+                                                "InitiatingProcessAccountSid",
+                                                "InitiatingProcessAccountUpn",
+                                                "InitiatingProcessAccountObjectId",
+                                                "InitiatingProcessLogonId",
+                                                "InitiatingProcessIntegrityLevel",
+                                                "InitiatingProcessTokenElevation",
+                                                "InitiatingProcessSHA1",
+                                                "InitiatingProcessSHA256",
+                                                "InitiatingProcessMD5",
+                                                "InitiatingProcessFileName",
+                                                "InitiatingProcessId",
+                                                "InitiatingProcessCommandLine",
+                                                "InitiatingProcessCreationTime",
+                                                "InitiatingProcessFolderPath",
+                                                "InitiatingProcessParentId",
+                                                "InitiatingProcessParentFileName",
+                                                "InitiatingProcessParentCreationTime",
+                                                "ReportId",
+                                                "AppGuardContainerId",
+                                                "AdditionalFields"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "Schema": {
+                                        "items": {
+                                            "properties": {
+                                                "Name": {
+                                                    "type": "string"
+                                                },
+                                                "Type": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "required": [
+                                                "Name",
+                                                "Type"
+                                            ],
+                                            "type": "object"
+                                        },
+                                        "type": "array"
+                                    },
+                                    "Stats": {
+                                        "properties": {
+                                            "ExecutionTime": {
+                                                "type": "number"
+                                            },
+                                            "dataset_statistics": {
+                                                "items": {
+                                                    "properties": {
+                                                        "table_row_count": {
+                                                            "type": "integer"
+                                                        },
+                                                        "table_size": {
+                                                            "type": "integer"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "table_row_count",
+                                                        "table_size"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "resource_usage": {
+                                                "properties": {
+                                                    "cache": {
+                                                        "properties": {
+                                                            "disk": {
+                                                                "properties": {
+                                                                    "hits": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "misses": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "total": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "memory": {
+                                                                "properties": {
+                                                                    "hits": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "misses": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "total": {
+                                                                        "type": "integer"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "cpu": {
+                                                        "properties": {
+                                                            "kernel": {
+                                                                "type": "string"
+                                                            },
+                                                            "total cpu": {
+                                                                "type": "string"
+                                                            },
+                                                            "user": {
+                                                                "type": "string"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "memory": {
+                                                        "properties": {
+                                                            "peak_per_node": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "headers": {
+                                "properties": {
+                                    "Content-Length": {
+                                        "type": "string"
+                                    },
+                                    "Content-Type": {
+                                        "type": "string"
+                                    },
+                                    "Date": {
+                                        "type": "string"
+                                    },
+                                    "Server": {
+                                        "type": "string"
+                                    },
+                                    "Strict-Transport-Security": {
+                                        "type": "string"
+                                    },
+                                    "x-content-type-options": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            },
+                            "statusCode": {
+                                "type": "integer"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "runAfter": {
+                    "HTTP": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ParseJson"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Hour",
+                    "interval": 6
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureloganalyticsdatacollector": {
+                    "connectionId": "/subscriptions/6a0XXde-XXXX-4XXX-XXX0-9XXX4/resourceGroups/hesaad-csgRG/providers/Microsoft.Web/connections/",
+                    "connectionName": "azureloganalyticsdatacollector-Get-O365Data",
+                    "id": "/subscriptions/6a0XXde-XXXX-4XXX-XXX0-9XXX4/providers/Microsoft.Web/locations/eastus/managedApis/azureloganalyticsdatacollector"
+                }
+            }
+        }
+    }
+}
