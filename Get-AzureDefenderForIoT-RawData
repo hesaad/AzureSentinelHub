@@ -1,0 +1,321 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "For_each_-_Alerts": {
+                "actions": {
+                    "Send_Data_-_Alerts": {
+                        "inputs": {
+                            "body": "@{items('For_each_-_Alerts')}",
+                            "headers": {
+                                "Log-Type": "AD4IOT_Alerts"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('HTTP_-_Get-DefenderForIoT-Alerts')",
+                "runAfter": {
+                    "HTTP_-_Get-DefenderForIoT-Alerts": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_-_CVE": {
+                "actions": {
+                    "Send_Data_-_CVE": {
+                        "inputs": {
+                            "body": "@{items('For_each_-_CVE')}",
+                            "headers": {
+                                "Log-Type": "AD4IOT_CVE"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('HTTP_Get-DefenderForIoT_-_CVEs')",
+                "runAfter": {
+                    "HTTP_Get-DefenderForIoT_-_CVEs": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_-_Devices": {
+                "actions": {
+                    "Send_Data_-_Devices": {
+                        "inputs": {
+                            "body": "@{items('For_each_-_Devices')}",
+                            "headers": {
+                                "Log-Type": "AD4IOT_Devices"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('HTTP_Get-DefenderForIoT-Devices')",
+                "runAfter": {
+                    "HTTP_Get-DefenderForIoT-Devices": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_-_Events": {
+                "actions": {
+                    "Send_Data_-_Events": {
+                        "inputs": {
+                            "body": "@{items('For_each_-_Events')}",
+                            "headers": {
+                                "Log-Type": "AD4IOT_Events"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('HTTP_Get-DefenderForIoT_-_Events')",
+                "runAfter": {
+                    "HTTP_Get-DefenderForIoT_-_Events": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "For_each_-_Vulnerable_Devices": {
+                "actions": {
+                    "Send_Data_-_Vulnerable_Devices": {
+                        "inputs": {
+                            "body": "@{items('For_each_-_Vulnerable_Devices')}",
+                            "headers": {
+                                "Log-Type": "AD4IOT_Vulnerable_Devices"
+                            },
+                            "host": {
+                                "connection": {
+                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                }
+                            },
+                            "method": "post",
+                            "path": "/api/logs"
+                        },
+                        "runAfter": {},
+                        "type": "ApiConnection"
+                    }
+                },
+                "foreach": "@body('HTTP_-_Get-DefenderForIoT_-_Vulnerable_Devices')",
+                "runAfter": {
+                    "HTTP_-_Get-DefenderForIoT_-_Vulnerable_Devices": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Foreach"
+            },
+            "HTTP_-_Get-DefenderForIoT-Alerts": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/alerts"
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Get-DefenderForIoT-_Security_Vulnerabilities": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/security"
+                },
+                "runAfter": {
+                    "HTTP_-_Get-DefenderForIoT_-_Operational_Vulnerabilities": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Get-DefenderForIoT_-_Operational_Vulnerabilities": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/operational"
+                },
+                "runAfter": {
+                    "For_each_-_Vulnerable_Devices": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_-_Get-DefenderForIoT_-_Vulnerable_Devices": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/devices"
+                },
+                "runAfter": {
+                    "For_each_-_Events": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_Get-DefenderForIoT-Devices": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/devices"
+                },
+                "runAfter": {
+                    "For_each_-_Alerts": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_Get-DefenderForIoT_-_CVEs": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/devices/cves"
+                },
+                "runAfter": {
+                    "For_each_-_Devices": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "HTTP_Get-DefenderForIoT_-_Events": {
+                "inputs": {
+                    "headers": {
+                        "Authorization": "@variables('AuthorizationKey')",
+                        "Content-Type": "application/json"
+                    },
+                    "method": "GET",
+                    "uri": "https://www.s3pl.net/api/v1/events"
+                },
+                "runAfter": {
+                    "For_each_-_CVE": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "AuthorizationKey",
+                            "type": "string",
+                            "value": "dXXXXXbXXXX9"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Send_Data_-_Security_Vulnerabilities": {
+                "inputs": {
+                    "body": "@{body('HTTP_-_Get-DefenderForIoT-_Security_Vulnerabilities')}",
+                    "headers": {
+                        "Log-Type": "AD4IOT_Security_Vulnerabilities"
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/api/logs"
+                },
+                "runAfter": {
+                    "HTTP_-_Get-DefenderForIoT-_Security_Vulnerabilities": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "Recurrence": {
+                "recurrence": {
+                    "frequency": "Day",
+                    "interval": 1
+                },
+                "type": "Recurrence"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "azureloganalyticsdatacollector": {
+                    "connectionId": "/subscriptions/e687190e-7359-4d77-9ed3-92492aa521b1/resourceGroups/AZ-GBB-RG-paulrob/providers/Microsoft.Web/connections/",
+                    "connectionName": "azureloganalyticsdatacollector",
+                    "id": "/subscriptions/e687190e-7359-4d77-9ed3-92492aa521b1/providers/Microsoft.Web/locations/uksouth/managedApis/azureloganalyticsdatacollector"
+                }
+            }
+        }
+    }
+}
