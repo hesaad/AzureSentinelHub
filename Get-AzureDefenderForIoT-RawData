@@ -197,7 +197,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/devices"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/reports/vulnerabilities/devices"
                 },
                 "runAfter": {
                     "For_each_-_Events": [
