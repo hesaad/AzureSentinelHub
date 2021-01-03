@@ -149,7 +149,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/alerts"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/alerts"
                 },
                 "runAfter": {
                     "Initialize_variable": [
@@ -165,7 +165,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/security"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/reports/vulnerabilities/security"
                 },
                 "runAfter": {
                     "HTTP_-_Get-DefenderForIoT_-_Operational_Vulnerabilities": [
@@ -181,7 +181,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/reports/vulnerabilities/operational"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/reports/vulnerabilities/operational"
                 },
                 "runAfter": {
                     "For_each_-_Vulnerable_Devices": [
@@ -213,7 +213,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/devices"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/devices"
                 },
                 "runAfter": {
                     "For_each_-_Alerts": [
@@ -229,7 +229,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/devices/cves"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/devices/cves"
                 },
                 "runAfter": {
                     "For_each_-_Devices": [
@@ -245,7 +245,7 @@
                         "Content-Type": "application/json"
                     },
                     "method": "GET",
-                    "uri": "https://www.s3pl.net/api/v1/events"
+                    "uri": "https://<defender_for_IoT_Sensor>/api/v1/events"
                 },
                 "runAfter": {
                     "For_each_-_CVE": [
