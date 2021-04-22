@@ -31,7 +31,7 @@ import select
 import subprocess
 import time
 
-daemon_port = "515"
+daemon_port = "530"
 agent_port = "25226"
 rsyslog_security_config_omsagent_conf_content_tokens = ["if", "contains", "then", "@127.0.0.1:25226", "CEF:", "ASA-"]
 rh_firewalld_agent_exception_tokens = ["INPUT", "tcp", "--dport", "25226", "ACCEPT"]
