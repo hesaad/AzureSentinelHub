@@ -2,62 +2,20 @@
     "definition": {
         "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
         "actions": {
-            "Append_to_array_variable": {
+            "Initialize_variable": {
                 "inputs": {
-                    "name": "TempArrayVar",
-                    "value": "@body('Parse_JSON_-_MCAS_Activities')"
-                },
-                "runAfter": {
-                    "Initialize_An_Array_Variable": [
-                        "Succeeded"
+                    "variables": [
+                        {
+                            "name": "MCAS_API_Token",
+                            "type": "string",
+                            "value": "Token QlxXXXXXXXXXXXXX="
+                        }
                     ]
                 },
-                "type": "AppendToArrayVariable"
+                "runAfter": {},
+                "type": "InitializeVariable"
             },
-            "For_each": {
-                "actions": {
-                    "Send_Data_-_MCAS_Activities_Log": {
-                        "inputs": {
-                            "body": "@{items('For_each')}",
-                            "headers": {
-                                "Log-Type": "MCAS_Activity_Log"
-                            },
-                            "host": {
-                                "connection": {
-                                    "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
-                                }
-                            },
-                            "method": "post",
-                            "path": "/api/logs"
-                        },
-                        "runAfter": {},
-                        "type": "ApiConnection"
-                    }
-                },
-                "foreach": "@variables('TempArrayVar')",
-                "runAfter": {
-                    "Append_to_array_variable": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "Foreach"
-            },
-            "HTTP_-_MCAS_Activities_API": {
-                "inputs": {
-                    "headers": {
-                        "Authorization": "@variables('MCAS_API_Token')"
-                    },
-                    "method": "GET",
-                    "uri": "https://m365x933168.eu2.portal.cloudappsecurity.com/api/v1/activities/"
-                },
-                "runAfter": {
-                    "MCAS_API_Token_-_Variable": [
-                        "Succeeded"
-                    ]
-                },
-                "type": "Http"
-            },
-            "Initialize_An_Array_Variable": {
+            "Initialize_variable_2": {
                 "inputs": {
                     "variables": [
                         {
@@ -67,568 +25,872 @@
                     ]
                 },
                 "runAfter": {
-                    "Parse_JSON_-_MCAS_Activities": [
+                    "Initialize_variable": [
                         "Succeeded"
                     ]
                 },
                 "type": "InitializeVariable"
             },
-            "MCAS_API_Token_-_Variable": {
+            "Initialize_variable_3": {
                 "inputs": {
                     "variables": [
                         {
-                            "name": "MCAS_API_Token",
-                            "type": "string",
-                            "value": "Token QhwZGlcWHBXXXXXXXXXXXXFk4aFXXXsXXXXXXXXXX1OGk4fGk5XXkXX"
+                            "name": "StartTime",
+                            "type": "integer",
+                            "value": "@ticks(addMinutes(utcNow(), -5))"
                         }
                     ]
                 },
-                "runAfter": {},
-                "type": "InitializeVariable"
-            },
-            "Parse_JSON_-_MCAS_Activities": {
-                "inputs": {
-                    "content": "@body('HTTP_-_MCAS_Activities_API')",
-                    "schema": {
-                        "properties": {
-                            "body": {
-                                "properties": {
-                                    "data": {
-                                        "items": {
-                                            "properties": {
-                                                "_id": {
-                                                    "type": "string"
-                                                },
-                                                "aadTenantId": {
-                                                    "type": "string"
-                                                },
-                                                "appId": {
-                                                    "type": "integer"
-                                                },
-                                                "appName": {
-                                                    "type": "string"
-                                                },
-                                                "classifications": {
-                                                    "type": "array"
-                                                },
-                                                "collected": {
-                                                    "properties": {
-                                                        "o365": {
-                                                            "properties": {
-                                                                "blobCreated": {
-                                                                    "type": "string"
-                                                                },
-                                                                "blobId": {
-                                                                    "type": "string"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "confidenceLevel": {
-                                                    "type": "integer"
-                                                },
-                                                "created": {
-                                                    "type": "integer"
-                                                },
-                                                "createdRaw": {
-                                                    "type": "integer"
-                                                },
-                                                "description": {
-                                                    "type": "string"
-                                                },
-                                                "description_id": {
-                                                    "type": "string"
-                                                },
-                                                "description_metadata": {
-                                                    "properties": {
-                                                        "colon": {
-                                                            "type": "string"
-                                                        },
-                                                        "dash": {
-                                                            "type": "string"
-                                                        },
-                                                        "operation_name": {
-                                                            "type": "string"
-                                                        },
-                                                        "target_object": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "device": {
-                                                    "properties": {},
-                                                    "type": "object"
-                                                },
-                                                "entityData": {
-                                                    "properties": {
-                                                        "0": {
-                                                            "properties": {
-                                                                "displayName": {
-                                                                    "type": "string"
-                                                                },
-                                                                "id": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "inst": {
-                                                                            "type": "integer"
-                                                                        },
-                                                                        "saas": {
-                                                                            "type": "integer"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                },
-                                                                "resolved": {
-                                                                    "type": "boolean"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        },
-                                                        "1": {},
-                                                        "2": {
-                                                            "properties": {
-                                                                "displayName": {
-                                                                    "type": "string"
-                                                                },
-                                                                "id": {
-                                                                    "properties": {
-                                                                        "id": {
-                                                                            "type": "string"
-                                                                        },
-                                                                        "inst": {
-                                                                            "type": "integer"
-                                                                        },
-                                                                        "saas": {
-                                                                            "type": "integer"
-                                                                        }
-                                                                    },
-                                                                    "type": "object"
-                                                                },
-                                                                "resolved": {
-                                                                    "type": "boolean"
-                                                                }
-                                                            },
-                                                            "type": "object"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "eventRouting": {
-                                                    "properties": {
-                                                        "auditing": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "lograbber": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "scubaUnpacker": {
-                                                            "type": "boolean"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "eventType": {
-                                                    "type": "integer"
-                                                },
-                                                "eventTypeName": {
-                                                    "type": "string"
-                                                },
-                                                "eventTypeValue": {
-                                                    "type": "string"
-                                                },
-                                                "genericEventType": {
-                                                    "type": "string"
-                                                },
-                                                "instantiation": {
-                                                    "type": "integer"
-                                                },
-                                                "instantiationRaw": {
-                                                    "type": "integer"
-                                                },
-                                                "internals": {
-                                                    "properties": {
-                                                        "otherIPs": {
-                                                            "items": {
-                                                                "type": "string"
-                                                            },
-                                                            "type": "array"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "location": {
-                                                    "properties": {
-                                                        "anonymousProxy": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "category": {
-                                                            "type": "integer"
-                                                        },
-                                                        "categoryValue": {
-                                                            "type": "string"
-                                                        },
-                                                        "city": {
-                                                            "type": "string"
-                                                        },
-                                                        "countryCode": {
-                                                            "type": "string"
-                                                        },
-                                                        "ipTags": {
-                                                            "items": {
-                                                                "type": "string"
-                                                            },
-                                                            "type": "array"
-                                                        },
-                                                        "isSatelliteProvider": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "latitude": {
-                                                            "type": "number"
-                                                        },
-                                                        "longitude": {
-                                                            "type": "number"
-                                                        },
-                                                        "organizationSearchable": {
-                                                            "type": "string"
-                                                        },
-                                                        "postalCode": {
-                                                            "type": "string"
-                                                        },
-                                                        "region": {
-                                                            "type": "string"
-                                                        },
-                                                        "regionCode": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "lograbberService": {
-                                                    "properties": {
-                                                        "o365EventGrabber": {
-                                                            "type": "boolean"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "mainInfo": {
-                                                    "properties": {
-                                                        "eventObjects": {
-                                                            "items": {
-                                                                "properties": {
-                                                                    "id": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "instanceId": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "link": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "name": {
-                                                                        "type": "string"
-                                                                    },
-                                                                    "objType": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "resolved": {
-                                                                        "type": "boolean"
-                                                                    },
-                                                                    "role": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "saasId": {
-                                                                        "type": "integer"
-                                                                    },
-                                                                    "tags": {
-                                                                        "type": "array"
-                                                                    }
-                                                                },
-                                                                "required": [
-                                                                    "objType",
-                                                                    "role",
-                                                                    "tags",
-                                                                    "name",
-                                                                    "instanceId",
-                                                                    "resolved",
-                                                                    "saasId",
-                                                                    "link",
-                                                                    "id"
-                                                                ],
-                                                                "type": "object"
-                                                            },
-                                                            "type": "array"
-                                                        },
-                                                        "prettyOperationName": {
-                                                            "type": "string"
-                                                        },
-                                                        "rawOperationName": {
-                                                            "type": "string"
-                                                        },
-                                                        "type": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "rawDataJson": {
-                                                    "properties": {
-                                                        "AadAppId": {
-                                                            "type": "string"
-                                                        },
-                                                        "CreationTime": {
-                                                            "type": "string"
-                                                        },
-                                                        "DataType": {
-                                                            "type": "string"
-                                                        },
-                                                        "Id": {
-                                                            "type": "string"
-                                                        },
-                                                        "Operation": {
-                                                            "type": "string"
-                                                        },
-                                                        "OrganizationId": {
-                                                            "type": "string"
-                                                        },
-                                                        "RecordType": {
-                                                            "type": "integer"
-                                                        },
-                                                        "RelativeUrl": {
-                                                            "type": "string"
-                                                        },
-                                                        "ResultCount": {
-                                                            "type": "string"
-                                                        },
-                                                        "UserId": {
-                                                            "type": "string"
-                                                        },
-                                                        "UserKey": {
-                                                            "type": "string"
-                                                        },
-                                                        "UserType": {
-                                                            "type": "integer"
-                                                        },
-                                                        "Version": {
-                                                            "type": "integer"
-                                                        },
-                                                        "Workload": {
-                                                            "type": "string"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "resolvedActor": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "string"
-                                                        },
-                                                        "instanceId": {
-                                                            "type": "string"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "objType": {
-                                                            "type": "string"
-                                                        },
-                                                        "resolved": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "role": {
-                                                            "type": "string"
-                                                        },
-                                                        "saasId": {
-                                                            "type": "string"
-                                                        },
-                                                        "tags": {
-                                                            "items": {
-                                                                "type": "string"
-                                                            },
-                                                            "type": "array"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "resolvedActorAccount": {
-                                                    "properties": {
-                                                        "id": {
-                                                            "type": "string"
-                                                        },
-                                                        "instanceId": {
-                                                            "type": "string"
-                                                        },
-                                                        "name": {
-                                                            "type": "string"
-                                                        },
-                                                        "resolved": {
-                                                            "type": "boolean"
-                                                        },
-                                                        "role": {
-                                                            "type": "string"
-                                                        },
-                                                        "saasId": {
-                                                            "type": "string"
-                                                        },
-                                                        "tags": {
-                                                            "type": "array"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                },
-                                                "saasId": {
-                                                    "type": "integer"
-                                                },
-                                                "severity": {
-                                                    "type": "string"
-                                                },
-                                                "source": {
-                                                    "type": "integer"
-                                                },
-                                                "srcAppId": {
-                                                    "type": "integer"
-                                                },
-                                                "tenantId": {
-                                                    "type": "integer"
-                                                },
-                                                "timestamp": {
-                                                    "type": "integer"
-                                                },
-                                                "timestampRaw": {
-                                                    "type": "integer"
-                                                },
-                                                "uid": {
-                                                    "type": "string"
-                                                },
-                                                "user": {
-                                                    "properties": {
-                                                        "userName": {
-                                                            "type": "string"
-                                                        },
-                                                        "userTags": {
-                                                            "items": {
-                                                                "type": "string"
-                                                            },
-                                                            "type": "array"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "required": [
-                                                "_id",
-                                                "tenantId",
-                                                "aadTenantId",
-                                                "appId",
-                                                "saasId",
-                                                "timestamp",
-                                                "timestampRaw",
-                                                "instantiation",
-                                                "instantiationRaw",
-                                                "created",
-                                                "createdRaw",
-                                                "eventType",
-                                                "eventTypeValue",
-                                                "eventRouting",
-                                                "mainInfo",
-                                                "confidenceLevel",
-                                                "source",
-                                                "lograbberService",
-                                                "srcAppId",
-                                                "collected",
-                                                "rawDataJson",
-                                                "resolvedActor",
-                                                "uid",
-                                                "appName",
-                                                "eventTypeName",
-                                                "classifications",
-                                                "entityData",
-                                                "description_id",
-                                                "description_metadata",
-                                                "description",
-                                                "genericEventType",
-                                                "device",
-                                                "severity"
-                                            ],
-                                            "type": "object"
-                                        },
-                                        "type": "array"
-                                    },
-                                    "hasNext": {
-                                        "type": "boolean"
-                                    },
-                                    "total": {
-                                        "type": "integer"
-                                    }
-                                },
-                                "type": "object"
-                            },
-                            "headers": {
-                                "properties": {
-                                    "Allow": {
-                                        "type": "string"
-                                    },
-                                    "Cache-Control": {
-                                        "type": "string"
-                                    },
-                                    "Connection": {
-                                        "type": "string"
-                                    },
-                                    "Content-Length": {
-                                        "type": "string"
-                                    },
-                                    "Content-Security-Policy": {
-                                        "type": "string"
-                                    },
-                                    "Content-Type": {
-                                        "type": "string"
-                                    },
-                                    "Date": {
-                                        "type": "string"
-                                    },
-                                    "Server": {
-                                        "type": "string"
-                                    },
-                                    "Set-Cookie": {
-                                        "type": "string"
-                                    },
-                                    "Transfer-Encoding": {
-                                        "type": "string"
-                                    },
-                                    "Vary": {
-                                        "type": "string"
-                                    },
-                                    "request_id": {
-                                        "type": "string"
-                                    },
-                                    "strict-transport-security": {
-                                        "type": "string"
-                                    },
-                                    "x-content-type-options": {
-                                        "type": "string"
-                                    }
-                                },
-                                "type": "object"
-                            },
-                            "statusCode": {
-                                "type": "integer"
-                            }
-                        },
-                        "type": "object"
-                    }
-                },
                 "runAfter": {
-                    "HTTP_-_MCAS_Activities_API": [
+                    "Initialize_variable_5": [
                         "Succeeded"
                     ]
                 },
-                "type": "ParseJson"
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_4": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "EndTime",
+                            "type": "integer",
+                            "value": "@ticks(utcNow())"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_3": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_5": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Ticks1970",
+                            "type": "integer",
+                            "value": "@ticks('1970-01-01')"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_2": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_6": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "StartTimeEpoch",
+                            "type": "integer",
+                            "value": "@div(sub(variables('StartTime'), variables('Ticks1970')),10000)"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_4": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_7": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "EndTimeEpoch",
+                            "type": "integer",
+                            "value": "@div(sub(variables('EndTime'), variables('Ticks1970')),10000)"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_6": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_8": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Skip",
+                            "type": "integer",
+                            "value": 0
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_7": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_9": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "HasNext",
+                            "type": "string",
+                            "value": "notnull"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_8": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Until_2": {
+                "actions": {
+                    "Condition": {
+                        "actions": {
+                            "Compose": {
+                                "inputs": "@variables('TempArrayVar')",
+                                "runAfter": {
+                                    "For_each": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Compose"
+                            },
+                            "For_each": {
+                                "actions": {
+                                    "Append_to_array_variable": {
+                                        "inputs": {
+                                            "name": "TempArrayVar",
+                                            "value": "@items('For_each')"
+                                        },
+                                        "runAfter": {},
+                                        "type": "AppendToArrayVariable"
+                                    }
+                                },
+                                "foreach": "@body('HTTP')['data']",
+                                "runAfter": {},
+                                "type": "Foreach"
+                            },
+                            "Send_Data": {
+                                "inputs": {
+                                    "body": "@{outputs('Compose')}",
+                                    "headers": {
+                                        "Log-Type": "MCASActivity2"
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['azureloganalyticsdatacollector']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/api/logs"
+                                },
+                                "runAfter": {
+                                    "Compose": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "expression": {
+                            "and": [
+                                {
+                                    "not": {
+                                        "equals": [
+                                            "@length(body('HTTP')['data'])",
+                                            0
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        "runAfter": {
+                            "Parse_JSON": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "If"
+                    },
+                    "HTTP": {
+                        "inputs": {
+                            "body": {
+                                "filters": {
+                                    "date": {
+                                        "range": {
+                                            "end": "@variables('EndTimeEpoch')",
+                                            "start": "@variables('StartTimeEpoch')"
+                                        }
+                                    }
+                                },
+                                "skip": "@variables('Skip')"
+                            },
+                            "headers": {
+                                "Authorization": "@variables('MCAS_API_
+                                ')"
+                            },
+                            "method": "POST",
+                            "uri": "https://msdx705805.us3.portal.cloudappsecurity.com/api/v1/activities/"
+                        },
+                        "runAfter": {},
+                        "type": "Http"
+                    },
+                    "Increment_variable": {
+                        "inputs": {
+                            "name": "Skip",
+                            "value": 100
+                        },
+                        "runAfter": {
+                            "Condition": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "IncrementVariable"
+                    },
+                    "Parse_JSON": {
+                        "inputs": {
+                            "content": "@body('HTTP')",
+                            "schema": {
+                                "properties": {
+                                    "body": {
+                                        "properties": {
+                                            "data": {
+                                                "items": {
+                                                    "properties": {
+                                                        "_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "aadTenantId": {
+                                                            "type": "string"
+                                                        },
+                                                        "appId": {
+                                                            "type": "integer"
+                                                        },
+                                                        "appName": {
+                                                            "type": "string"
+                                                        },
+                                                        "classifications": {
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "collected": {
+                                                            "properties": {
+                                                                "o365": {
+                                                                    "properties": {
+                                                                        "blobCreated": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "blobId": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "confidenceLevel": {
+                                                            "type": "integer"
+                                                        },
+                                                        "created": {
+                                                            "type": "integer"
+                                                        },
+                                                        "createdRaw": {
+                                                            "type": "integer"
+                                                        },
+                                                        "description": {
+                                                            "type": "string"
+                                                        },
+                                                        "description_id": {
+                                                            "type": "string"
+                                                        },
+                                                        "description_metadata": {
+                                                            "properties": {
+                                                                "colon": {
+                                                                    "type": "string"
+                                                                },
+                                                                "dash": {
+                                                                    "type": "string"
+                                                                },
+                                                                "event_category": {
+                                                                    "type": "string"
+                                                                },
+                                                                "target_object": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "device": {
+                                                            "properties": {
+                                                                "clientIP": {
+                                                                    "type": "string"
+                                                                },
+                                                                "countryCode": {
+                                                                    "type": "string"
+                                                                },
+                                                                "userAgent": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "entityData": {
+                                                            "properties": {
+                                                                "0": {
+                                                                    "properties": {
+                                                                        "displayName": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "id": {
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "inst": {
+                                                                                    "type": "integer"
+                                                                                },
+                                                                                "saas": {
+                                                                                    "type": "integer"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "resolved": {
+                                                                            "type": "boolean"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "1": {},
+                                                                "2": {
+                                                                    "properties": {
+                                                                        "displayName": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "id": {
+                                                                            "properties": {
+                                                                                "id": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "inst": {
+                                                                                    "type": "integer"
+                                                                                },
+                                                                                "saas": {
+                                                                                    "type": "integer"
+                                                                                }
+                                                                            },
+                                                                            "type": "object"
+                                                                        },
+                                                                        "resolved": {
+                                                                            "type": "boolean"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "eventRouting": {
+                                                            "properties": {
+                                                                "auditing": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "dispersed": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "lograbber": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "scubaUnpacker": {
+                                                                    "type": "boolean"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "eventType": {
+                                                            "type": "integer"
+                                                        },
+                                                        "eventTypeName": {
+                                                            "type": "string"
+                                                        },
+                                                        "eventTypeValue": {
+                                                            "type": "string"
+                                                        },
+                                                        "genericEventType": {
+                                                            "type": "string"
+                                                        },
+                                                        "instantiation": {
+                                                            "type": "integer"
+                                                        },
+                                                        "instantiationRaw": {
+                                                            "type": "integer"
+                                                        },
+                                                        "internals": {
+                                                            "properties": {
+                                                                "otherIPs": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "location": {
+                                                            "properties": {
+                                                                "anonymousProxy": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "carrier": {
+                                                                    "type": "string"
+                                                                },
+                                                                "category": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "categoryValue": {
+                                                                    "type": "string"
+                                                                },
+                                                                "city": {
+                                                                    "type": "string"
+                                                                },
+                                                                "countryCode": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ipTags": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "isSatelliteProvider": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "latitude": {
+                                                                    "type": "number"
+                                                                },
+                                                                "longitude": {
+                                                                    "type": "number"
+                                                                },
+                                                                "organizationSearchable": {
+                                                                    "type": "string"
+                                                                },
+                                                                "postalCode": {
+                                                                    "type": "string"
+                                                                },
+                                                                "region": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "lograbberService": {
+                                                            "properties": {
+                                                                "categoryReasonForNotGedi": {
+                                                                    "type": "string"
+                                                                },
+                                                                "o365EventGrabber": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "valueReasonForNotGedi": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "mainInfo": {
+                                                            "properties": {
+                                                                "eventObjects": {
+                                                                    "items": {
+                                                                        "properties": {
+                                                                            "governable": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "id": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "instanceId": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "link": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "objType": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "resolved": {
+                                                                                "type": "boolean"
+                                                                            },
+                                                                            "role": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "saasId": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "serviceObjectType": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "tags": {
+                                                                                "type": "array"
+                                                                            }
+                                                                        },
+                                                                        "required": [
+                                                                            "objType",
+                                                                            "role",
+                                                                            "tags",
+                                                                            "name",
+                                                                            "id"
+                                                                        ],
+                                                                        "type": "object"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "prettyOperationName": {
+                                                                    "type": "string"
+                                                                },
+                                                                "rawOperationName": {
+                                                                    "type": "string"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "rawDataJson": {
+                                                            "properties": {
+                                                                "ClientIP": {
+                                                                    "type": "string"
+                                                                },
+                                                                "CorrelationId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "CreationTime": {
+                                                                    "type": "string"
+                                                                },
+                                                                "DoNotDistributeEvent": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "EventSource": {
+                                                                    "type": "string"
+                                                                },
+                                                                "HighPriorityMediaProcessing": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "Id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ItemType": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ListId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ListItemUniqueId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "ObjectId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "Operation": {
+                                                                    "type": "string"
+                                                                },
+                                                                "OrganizationId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "RecordType": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "Site": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SiteUrl": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SourceFileExtension": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SourceFileName": {
+                                                                    "type": "string"
+                                                                },
+                                                                "SourceRelativeUrl": {
+                                                                    "type": "string"
+                                                                },
+                                                                "UserAgent": {
+                                                                    "type": "string"
+                                                                },
+                                                                "UserId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "UserKey": {
+                                                                    "type": "string"
+                                                                },
+                                                                "UserType": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "Version": {
+                                                                    "type": "integer"
+                                                                },
+                                                                "WebId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "Workload": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "resolvedActor": {
+                                                            "properties": {
+                                                                "governable": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "instanceId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "objType": {
+                                                                    "type": "string"
+                                                                },
+                                                                "resolved": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "role": {
+                                                                    "type": "string"
+                                                                },
+                                                                "saasId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tags": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "resolvedActorAccount": {
+                                                            "properties": {
+                                                                "governable": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "instanceId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "resolved": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "role": {
+                                                                    "type": "string"
+                                                                },
+                                                                "saasId": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tags": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "saasId": {
+                                                            "type": "integer"
+                                                        },
+                                                        "severity": {
+                                                            "type": "string"
+                                                        },
+                                                        "source": {
+                                                            "type": "integer"
+                                                        },
+                                                        "srcAppId": {
+                                                            "type": "integer"
+                                                        },
+                                                        "tags": {
+                                                            "items": {
+                                                                "type": "string"
+                                                            },
+                                                            "type": "array"
+                                                        },
+                                                        "tenantId": {
+                                                            "type": "integer"
+                                                        },
+                                                        "timestamp": {
+                                                            "type": "integer"
+                                                        },
+                                                        "timestampRaw": {
+                                                            "type": "integer"
+                                                        },
+                                                        "uid": {
+                                                            "type": "string"
+                                                        },
+                                                        "user": {
+                                                            "properties": {
+                                                                "userName": {
+                                                                    "type": "string"
+                                                                },
+                                                                "userTags": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "userAgent": {
+                                                            "properties": {
+                                                                "browser": {
+                                                                    "type": "string"
+                                                                },
+                                                                "deviceType": {
+                                                                    "type": "string"
+                                                                },
+                                                                "family": {
+                                                                    "type": "string"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                },
+                                                                "nativeBrowser": {
+                                                                    "type": "boolean"
+                                                                },
+                                                                "operatingSystem": {
+                                                                    "properties": {
+                                                                        "family": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "name": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    },
+                                                                    "type": "object"
+                                                                },
+                                                                "os": {
+                                                                    "type": "string"
+                                                                },
+                                                                "tags": {
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "type": "array"
+                                                                },
+                                                                "type": {
+                                                                    "type": "string"
+                                                                },
+                                                                "typeName": {
+                                                                    "type": "string"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "_id",
+                                                        "tenantId",
+                                                        "aadTenantId",
+                                                        "appId",
+                                                        "saasId",
+                                                        "timestamp",
+                                                        "timestampRaw",
+                                                        "instantiation",
+                                                        "instantiationRaw",
+                                                        "created",
+                                                        "createdRaw",
+                                                        "eventType",
+                                                        "eventTypeValue",
+                                                        "eventRouting",
+                                                        "device",
+                                                        "mainInfo",
+                                                        "confidenceLevel",
+                                                        "source",
+                                                        "lograbberService",
+                                                        "collected",
+                                                        "rawDataJson",
+                                                        "uid",
+                                                        "appName",
+                                                        "eventTypeName",
+                                                        "classifications",
+                                                        "entityData",
+                                                        "description_id",
+                                                        "description_metadata",
+                                                        "description",
+                                                        "genericEventType",
+                                                        "severity"
+                                                    ],
+                                                    "type": "object"
+                                                },
+                                                "type": "array"
+                                            },
+                                            "hasNext": {
+                                                "type": "boolean"
+                                            },
+                                            "total": {
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        },
+                        "runAfter": {
+                            "HTTP": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "ParseJson"
+                    },
+                    "Set_variable": {
+                        "inputs": {
+                            "name": "HasNext",
+                            "value": "@{body('Parse_JSON')?['body']?['hasNext']}"
+                        },
+                        "runAfter": {
+                            "Increment_variable": [
+                                "Succeeded"
+                            ]
+                        },
+                        "type": "SetVariable"
+                    }
+                },
+                "expression": "@equals(variables('HasNext'), '')",
+                "limit": {
+                    "count": 60,
+                    "timeout": "PT1H"
+                },
+                "runAfter": {
+                    "Initialize_variable_9": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Until"
             }
         },
         "contentVersion": "1.0.0.0",
@@ -653,9 +915,9 @@
         "$connections": {
             "value": {
                 "azureloganalyticsdatacollector": {
-                    "connectionId": "/subscriptions/6aXXXXXXde-XXXX90-9d634XXXXXXXX4/resourceGroups/hesaad-csgRG/providers/Microsoft.Web/connections/azureloganalyticsdatacollector-Get-O365Data",
-                    "connectionName": "azureloganalyticsdatacollector-Get-O365Data",
-                    "id": "/subscriptions/6aXXXXXXde-XXXX90-9d634XXXXXXXX4/providers/Microsoft.Web/locations/eastus/managedApis/azureloganalyticsdatacollector"
+                    "connectionId": "/subscriptions/XXX-XX-XX-XXX-XXXX/resourceGroups/Demos-RG1/providers/Microsoft.Web/connections/azureloganalyticsdatacollector",
+                    "connectionName": "azureloganalyticsdatacollector",
+                    "id": "/subscriptions/XXX-XX-XX-XXX-XXXX/providers/Microsoft.Web/locations/centralus/managedApis/azureloganalyticsdatacollector"
                 }
             }
         }
