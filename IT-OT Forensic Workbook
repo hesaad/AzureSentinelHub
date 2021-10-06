@@ -1,0 +1,1205 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "2b569602-0ac2-4276-b2bb-5e59c666854f",
+            "version": "KqlParameterItem/1.0",
+            "name": "Subscription",
+            "type": 6,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "limitSelectTo": 100,
+              "additionalResourceOptions": [
+                "value::1",
+                "value::all"
+              ],
+              "includeAll": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "524a7a46-0d34-45a3-863f-be259022d3ca",
+            "version": "KqlParameterItem/1.0",
+            "name": "Workspace",
+            "type": 5,
+            "isRequired": true,
+            "multiSelect": true,
+            "quote": "'",
+            "delimiter": ",",
+            "query": "where type =~ 'microsoft.operationalinsights/workspaces'\r\n| project id",
+            "crossComponentResources": [
+              "{Subscription}"
+            ],
+            "value": [
+              "/subscriptions/6a021fde-5198-441e-9190-9d634e1f4a84/resourceGroups/hesaad-csgRG/providers/Microsoft.OperationalInsights/workspaces/hesaadCSGSentinel"
+            ],
+            "typeSettings": {
+              "limitSelectTo": 100,
+              "additionalResourceOptions": [
+                "value::1",
+                "value::all"
+              ]
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "queryType": 1,
+            "resourceType": "microsoft.resourcegraph/resources"
+          },
+          {
+            "id": "d1f341a0-677d-4375-a575-63df61593733",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 1209600000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ]
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "a13659b4-b7af-4be2-9a69-b448461c49ae",
+            "version": "KqlParameterItem/1.0",
+            "name": "Instructions",
+            "label": "Setup instructions",
+            "type": 10,
+            "isRequired": true,
+            "typeSettings": {
+              "additionalResourceOptions": []
+            },
+            "jsonData": "[\r\n  { \"value\": \"Yes\", \"label\": \"Yes\"},\r\n  { \"value\": \"No\", \"label\": \"No\", \"selected\":true },\r\n  { \"value\": \"ChangeLog\", \"label\": \"Change Log\"}\r\n]",
+            "timeContext": {
+              "durationMs": 86400000
+            },
+            "value": "Yes"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 0"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### This workbook will provide a status overview for Microsoft Defender IT / OT Forensics, covering both Microsoft Defender for Endpoint (MDE) EPP/AV module and Azure Defender for IoT"
+      },
+      "name": "text - 1"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "# Workbook setup intructions\r\n\r\nIn order to use this workbook the following configuration needs to be enabled in MDE & AD4IoT tenant"
+      },
+      "conditionalVisibility": {
+        "parameterName": "Instructions",
+        "comparison": "isEqualTo",
+        "value": "Yes"
+      },
+      "name": "text - 3"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "# Change Log\r\n\r\n## Version 0.1\r\nDefender health status added\r\n\r\n## Version 0.2\r\nAdded windows device summary view\r\nAdded windows device details view\r\n\r\n## Version 0.3\r\nComing soon"
+      },
+      "conditionalVisibility": {
+        "parameterName": "Instructions",
+        "comparison": "isEqualTo",
+        "value": "ChangeLog"
+      },
+      "name": "text - 4"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "8be630b0-a1ec-4a16-b868-68ffc2128836",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "MDE (EPP/AV) - Windows Summary",
+            "subTarget": "WSummary",
+            "preText": "",
+            "style": "link"
+          },
+          {
+            "id": "f648cbc7-fb4c-49b3-8633-05a798407a1f",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "MDE (EPP/AV) - Windows Details",
+            "subTarget": "WDetails",
+            "preText": "",
+            "style": "link"
+          },
+          {
+            "id": "246453be-c5c6-44e1-94ad-0bbbe6d45d77",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "MDE (EPP/AV) - Mac Summary",
+            "subTarget": "MSummary",
+            "style": "link"
+          },
+          {
+            "id": "516b5fab-8cd8-4625-87b2-3a78fb368731",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "MDE (EPP/AV) - Mac Details",
+            "subTarget": "MDetails",
+            "style": "link"
+          },
+          {
+            "id": "6361d84b-324a-4177-a13a-fac51c42f7e6",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "Azure Defender for IoT - Devices",
+            "subTarget": "AD4IoTDevices",
+            "style": "link"
+          },
+          {
+            "id": "750544c0-0dc3-4035-932e-585b1b83d7fd",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "Azure Defender for IoT - Events",
+            "subTarget": "AD4IoTEvents",
+            "style": "link"
+          },
+          {
+            "id": "8db6b53e-60df-4d69-9f69-39495d4e583b",
+            "cellValue": "Parm",
+            "linkTarget": "parameter",
+            "linkLabel": "Azure Defender for IoT - CVEs",
+            "subTarget": "AD4IoTVCEs",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 2",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "MDE (EPP/AV) - Windows Device status",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize AVEnabled=count(AntivirusEnabled_s) by AntivirusEnabled_s",
+              "size": 1,
+              "title": "Antivirus Health",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 5"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize AVEnabled=count(AntivirusReporting_s) by AntivirusReporting_s",
+              "size": 1,
+              "title": "Antivirus Reporting Health",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize AVSigEnabled=count(AntivirusSignatureVersion_s) by AntivirusSignatureVersion_s",
+              "size": 1,
+              "title": "Antivirus Signature Compliance",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "N/A",
+                    "label": "DISABLED",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "25",
+            "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize BMEnabled=count(BehaviorMonitoring_s) by BehaviorMonitoring_s",
+              "size": 1,
+              "title": "Behavior Monitor Health",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "ENABLED",
+                    "color": "blue"
+                  },
+                  {
+                    "seriesName": "",
+                    "label": "DISABLED",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "25",
+            "name": "query - 3"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize CPEnabled=count(CloudProtection_s) by CloudProtection_s",
+              "size": 1,
+              "title": "Cloud Protection Health",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "25",
+            "name": "query - 0"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize PUAEnabled=count(PUAProtection_s) by PUAProtection_s",
+              "size": 1,
+              "title": "Potentially Unwanted Application Status",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "DISABLED",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "25",
+            "name": "query - 1"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize SensorDataEnabled=count(SensorDataCollection_s) by SensorDataCollection_s",
+              "size": 1,
+              "title": "Sensor Data Status",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "DISABLED",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "25",
+            "name": "query - 2"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| summarize SensorEnabled=count(SensorEnabled_s) by SensorEnabled_s",
+              "size": 1,
+              "title": "Sensor Health",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart",
+              "chartSettings": {
+                "seriesLabelSettings": [
+                  {
+                    "seriesName": "DISABLED",
+                    "color": "orange"
+                  }
+                ]
+              }
+            },
+            "customWidth": "25",
+            "name": "query - 3"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "WSummary"
+      },
+      "name": "group - Overall Health"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "MDE (EPP/AV) - Device Summary",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AgentHealthStatusWindows_CL\r\n| where DeviceId_s  <> \"\"\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by DeviceId_s\r\n| project Computer = DeviceId_s, AntivirusEnabled_s, AntivirusReporting_s, AntivirusSignatureVersion_s, BehaviorMonitoring_s,CloudProtection_s,PUAProtection_s, SensorDataCollection_s,SensorEnabled_s,TamperProtection_s//,mtgPerf , DeviceName_s",
+              "size": 0,
+              "showAnalytics": true,
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "showRefreshButton": true,
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "AntivirusEnabled_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "critical",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "AntivirusReporting_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "AntivirusSignatureVersion_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "BehaviorMonitoring_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "CloudProtection_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "PUAProtection_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "critical",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "SensorDataCollection_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "SensorEnabled_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "TamperProtection_s",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "4",
+                          "text": ""
+                        }
+                      ]
+                    },
+                    "numberFormat": {
+                      "unit": 0,
+                      "options": {
+                        "style": "decimal"
+                      }
+                    }
+                  }
+                ],
+                "filter": true,
+                "labelSettings": [
+                  {
+                    "columnId": "AntivirusEnabled_s",
+                    "label": "AV"
+                  },
+                  {
+                    "columnId": "AntivirusReporting_s",
+                    "label": "AV Reporting"
+                  },
+                  {
+                    "columnId": "AntivirusSignatureVersion_s",
+                    "label": "Signature"
+                  },
+                  {
+                    "columnId": "BehaviorMonitoring_s",
+                    "label": "BM"
+                  },
+                  {
+                    "columnId": "CloudProtection_s",
+                    "label": "CP"
+                  },
+                  {
+                    "columnId": "PUAProtection_s",
+                    "label": "PUA"
+                  },
+                  {
+                    "columnId": "SensorDataCollection_s",
+                    "label": "Sensor Data"
+                  },
+                  {
+                    "columnId": "SensorEnabled_s",
+                    "label": "Sensor"
+                  },
+                  {
+                    "columnId": "TamperProtection_s",
+                    "label": "TP"
+                  }
+                ]
+              }
+            },
+            "showPin": true,
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "WDetails"
+      },
+      "name": "group - details"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "MDE (EPP/AV) - Mac Summary",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend ImpairedCommunications_ = tostring(test.ImpairedCommunications)\r\n|summarize test=count(Device_) by ImpairedCommunications_",
+              "size": 0,
+              "title": "ImpairedCommunications_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend PUAProtection_ = tostring(test.PUAProtection)\r\n|summarize test=count(Device_) by PUAProtection_",
+              "size": 0,
+              "title": "PUAProtection_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend RealtimeProtection_ = tostring(test.RealtimeProtection)\r\n|summarize test=count(Device_) by RealtimeProtection_",
+              "size": 0,
+              "title": "RealtimeProtection_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0 - Copy - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend SensorDataCollection_ = tostring(test.SensorDataCollection)\r\n|summarize test=count(Device_) by SensorDataCollection_",
+              "size": 0,
+              "title": "SensorDataCollection_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0 - Copy - Copy - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend CloudProtection_ = tostring(test.CloudProtection)\r\n|summarize test=count(Device_) by CloudProtection_",
+              "size": 0,
+              "title": "CloudProtection_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0 - Copy"
+          },
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend AntivirusSignatureVersion_ = tostring(test.AntivirusSignatureVersion)\r\n|summarize test=count(Device_) by AntivirusSignatureVersion_",
+              "size": 0,
+              "title": "AntivirusSignatureVersion_",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "piechart"
+            },
+            "customWidth": "33",
+            "name": "query - 0 - Copy - Copy"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "MSummary"
+      },
+      "name": "Mac Summary"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "MDE (EPP/AV) - MAC Details",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "MDE_MAC_devicehealth_CL\r\n| extend test = parse_json(Results_s)\r\n| mv-expand test\r\n| extend Device_ = tostring(test.DeviceName)\r\n| summarize mtgPerf= arg_max(TimeGenerated, *) by Device_\r\n| extend ImpairedCommunications_ = tostring(test.ImpairedCommunications)\r\n| extend PUAProtection_ = tostring(test.PUAProtection)\r\n| extend RealtimeProtection_ = tostring(test.RealtimeProtection)\r\n| extend SensorDataCollection_ = tostring(test.SensorDataCollection)\r\n| extend CloudProtection_ = tostring(test.CloudProtection)\r\n| extend AntivirusSignatureVersion_ = tostring(test.AntivirusSignatureVersion)\r\n|project Device_, ImpairedCommunications_, PUAProtection_, RealtimeProtection_, SensorDataCollection_, CloudProtection_, AntivirusSignatureVersion_",
+              "size": 0,
+              "title": "MAC Details",
+              "timeContext": {
+                "durationMs": 1209600000
+              },
+              "timeContextFromParameter": "TimeRange",
+              "showExportToExcel": true,
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "crossComponentResources": [
+                "{Workspace}"
+              ],
+              "visualization": "table",
+              "gridSettings": {
+                "formatters": [
+                  {
+                    "columnMatch": "ImpairedCommunications_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "3",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "PUAProtection_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "error",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "RealtimeProtection_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "error",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "SensorDataCollection_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "error",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "CloudProtection_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "error",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "columnMatch": "AntivirusSignatureVersion_",
+                    "formatter": 18,
+                    "formatOptions": {
+                      "thresholdsOptions": "icons",
+                      "thresholdsGrid": [
+                        {
+                          "operator": "==",
+                          "thresholdValue": "ENABLED",
+                          "representation": "success",
+                          "text": ""
+                        },
+                        {
+                          "operator": "==",
+                          "thresholdValue": "DISABLED",
+                          "representation": "error",
+                          "text": ""
+                        },
+                        {
+                          "operator": "Default",
+                          "thresholdValue": null,
+                          "representation": "question",
+                          "text": ""
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "filter": true,
+                "labelSettings": [
+                  {
+                    "columnId": "Device_",
+                    "label": "Device"
+                  },
+                  {
+                    "columnId": "ImpairedCommunications_",
+                    "label": "Impaired Comms."
+                  },
+                  {
+                    "columnId": "PUAProtection_",
+                    "label": "PUA"
+                  },
+                  {
+                    "columnId": "RealtimeProtection_",
+                    "label": "Real-Time Protection"
+                  },
+                  {
+                    "columnId": "SensorDataCollection_",
+                    "label": "Sensor Status"
+                  },
+                  {
+                    "columnId": "CloudProtection_",
+                    "label": "Cloud Protection"
+                  },
+                  {
+                    "columnId": "AntivirusSignatureVersion_",
+                    "label": "AV Status"
+                  }
+                ]
+              },
+              "sortBy": []
+            },
+            "conditionalVisibility": {
+              "parameterName": "Parm",
+              "comparison": "isEqualTo",
+              "value": "MDetails"
+            },
+            "name": "MAC Details"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "MDetails"
+      },
+      "name": "MAC details"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Azure Defender for IoT - Devices",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AD4IOT_Devices_CL\r\n| project Vendor = vendor_s, DeviceName = name_s, DeviceIP = ipAddresses_s, MacAddresses= macAddresses_s, Type = type_s, Protocol = protocols_s, Firmware = firmware_s",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces",
+              "visualization": "table",
+              "tileSettings": {
+                "showBorder": false
+              },
+              "mapSettings": {
+                "locInfo": "LatLong"
+              }
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "AD4IoTDevices"
+      },
+      "name": "group - AD4IoTDevices"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Azure Defender for IoT - Events",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AD4IOT_Events_CL\r\n| project Event = title_s, timeStamp = timestamp_d, Content = content_s, Type = type_s",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "AD4IoTEvents"
+      },
+      "name": "group - AD4IoTEvents"
+    },
+    {
+      "type": 12,
+      "content": {
+        "version": "NotebookGroup/1.0",
+        "groupType": "editable",
+        "title": "Azure Defender for IoT - CVEs",
+        "items": [
+          {
+            "type": 3,
+            "content": {
+              "version": "KqlItem/1.0",
+              "query": "AD4IOT_CVE_CL\r\n| project CVE = cveId_s, Score = score_s, IP = IPAddress, AttackVector = attackVector_s, Description = description_s",
+              "size": 0,
+              "timeContext": {
+                "durationMs": 0
+              },
+              "timeContextFromParameter": "TimeRange",
+              "queryType": 0,
+              "resourceType": "microsoft.operationalinsights/workspaces"
+            },
+            "name": "query - 0"
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "Parm",
+        "comparison": "isEqualTo",
+        "value": "AD4IoTVCEs"
+      },
+      "name": "group - AD4IoTVCEs"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/6a021fde-5198-441e-9190-9d634e1f4a84/resourcegroups/hesaad-csgrg/providers/microsoft.operationalinsights/workspaces/hesaadcsgsentinel"
+  ],
+  "fromTemplateId": "sentinel-UserWorkbook",
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
